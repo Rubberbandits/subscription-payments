@@ -1,0 +1,30 @@
+{
+  "name": "subscription-payments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rubberbandits/subscription-payments.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rubberbandits/subscription-payments/issues"
+  },
+  "homepage": "https://github.com/Rubberbandits/subscription-payments#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.5.0",
+    "hardhat": "^2.9.3"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "ethers": "^5.6.4"
+  }
+}
