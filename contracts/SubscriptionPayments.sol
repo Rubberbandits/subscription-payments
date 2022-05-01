@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 
+error SubscriberNotAdded(string reason);
+
 contract SubscriptionPayments is Ownable, PaymentSplitter {
     // Storage
     uint256 price = 0.5 ether;
@@ -21,15 +23,25 @@ contract SubscriptionPayments is Ownable, PaymentSplitter {
     receive() override external payable {
         require(msg.value >= price, "Insufficient value");
 
-        if (subscriptions[_msgSender()] < block.timestamp) {
-            require(subscriptionKeys.length < maxSubscriptions, "No slots");
-        }
-
-        subscriptions[_msgSender()] = block.timestamp + subscriptionTime;
-        subscriptionKeys.push(_msgSender());
+		(bool success) = addSubscriber(_msgSender());
+		if (!success) {
+			revert SubscriberNotAdded("addSubscriber failed");
+		}
 
         emit PaymentReceived(_msgSender(), msg.value);
     }
+
+	// Internal
+	function addSubscriber(address subscriber) internal returns (bool success) {
+		if (subscriptions[subscriber] < block.timestamp) {
+            require(subscriptionKeys.length < maxSubscriptions, "No slots");
+        }
+
+        subscriptions[subscriber] = block.timestamp + subscriptionTime;
+        subscriptionKeys.push(subscriber);
+
+		return true;
+	}
 
     // View
     function getSubscriptionCount() public view returns (uint256 length) {
@@ -52,4 +64,11 @@ contract SubscriptionPayments is Ownable, PaymentSplitter {
     function setSubscriptionTime(uint32 _subscriptionTime) external onlyOwner {
         subscriptionTime = _subscriptionTime;
     }
+
+	function giveSubscriber(address subscriber) external onlyOwner {
+		(bool success) = addSubscriber(subscriber);
+		if (!success) {
+			revert SubscriberNotAdded("addSubscriber failed");
+		}
+	}
 }
